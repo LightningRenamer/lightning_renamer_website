@@ -1,794 +1,576 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" class="tag-zh" data-theme="light" data-hero-preview="light">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lightning Renamer - 智能文件重命名工具</title>
-    <style>
-        :root {
-            --bg-body: #ffffff;
-            --bg-section: #f5f5f7;
-            --text-heading: #1d1d1f;
-            --text-body: #424245;
-            /* Slightly darker for better readability of long text */
-            --accent-color: #0071e3;
-            --nav-bg: rgba(255, 255, 255, 0.8);
-            --border-color: #d2d2d7;
-        }
+    <meta name="description" content="Lightning Renamer 是一款专为 Mac 用户打造的专业级批量重命名工具，提供 14 种重命名规则、元数据支持、规则作用域与智能筛选能力。">
+    <link rel="icon" type="image/png" href="assets/app-icon.png">
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem("lightning_renamer_theme");
+                const theme = savedTheme === "light" || savedTheme === "dark"
+                    ? savedTheme
+                    : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+                document.documentElement.dataset.theme = theme;
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-heading);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            /* Increased line height for better readability of long text */
-            letter-spacing: -0.012em;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Nav */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: 48px;
-            background: var(--nav-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 999;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-content {
-            width: 100%;
-            max-width: 980px;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 19px;
-            font-weight: 600;
-            color: var(--text-heading);
-            text-decoration: none;
-            transition: opacity 0.3s;
-        }
-
-        .logo:hover {
-            opacity: 0.8;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-links a,
-        .lang-btn {
-            font-size: 12px;
-            color: #666;
-            text-decoration: none;
-            margin-left: 20px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover,
-        .lang-btn:hover {
-            color: var(--text-heading);
-        }
-
-        /* General Layout */
-        .section {
-            padding: 100px 0;
-            overflow: hidden;
-        }
-
-        .section.alt-bg {
-            background-color: var(--bg-section);
-        }
-
-        .container {
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Typography */
-        h1 {
-            font-size: 56px;
-            line-height: 1.07143;
-            font-weight: 700;
-            letter-spacing: -0.005em;
-            margin-bottom: 20px;
-        }
-
-        h2 {
-            font-size: 40px;
-            line-height: 1.1;
-            font-weight: 600;
-            letter-spacing: 0em;
-            margin-bottom: 20px;
-        }
-
-        h3 {
-            font-size: 24px;
-            line-height: 1.2;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        p {
-            font-size: 17px;
-            line-height: 1.5;
-            font-weight: 400;
-            color: var(--text-body);
-            margin-bottom: 20px;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .text-max-800 {
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* Hero */
-        .hero {
-            padding-top: 150px;
-            padding-bottom: 60px;
-            text-align: center;
-        }
-
-        .hero-image-container {
-            margin-top: 60px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            max-width: 100%;
-        }
-
-        .hero-image-container img {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+                const savedHeroPreview = localStorage.getItem("lightning_renamer_hero_preview");
+                const heroPreview = savedHeroPreview === "light" || savedHeroPreview === "dark"
+                    ? savedHeroPreview
+                    : theme;
+                document.documentElement.dataset.heroPreview = heroPreview;
+            } catch (error) {
+                document.documentElement.dataset.theme = "light";
+                document.documentElement.dataset.heroPreview = "light";
             }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero,
-        .section,
-        footer {
-            opacity: 0;
-            animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .hero {
-            animation-delay: 0.1s;
-        }
-
-        .section:nth-of-type(2) {
-            animation-delay: 0.2s;
-        }
-
-        .section:nth-of-type(3) {
-            animation-delay: 0.3s;
-        }
-
-        .section:nth-of-type(4) {
-            animation-delay: 0.4s;
-        }
-
-        .section:nth-of-type(5) {
-            animation-delay: 0.5s;
-        }
-
-        footer {
-            animation-delay: 0.6s;
-        }
-
-        /* App Store Button */
-        .app-store-button {
-            display: inline-flex;
-            align-items: center;
-            background-color: #000;
-            color: #fff;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            margin-top: 20px;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-
-        .app-store-button:hover {
-            transform: translateY(-2px);
-            background-color: #333;
-        }
-
-        .app-store-button svg {
-            width: 24px;
-            height: 24px;
-            margin-right: 8px;
-        }
-
-        .btn-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            line-height: 1;
-        }
-
-        .btn-text .small {
-            font-size: 10px;
-            opacity: 0.8;
-        }
-
-        .btn-text .big {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        /* Feature Rows (Left/Right) */
-        .feature-row {
-            display: flex;
-            align-items: center;
-            gap: 60px;
-            margin-bottom: 120px;
-        }
-
-        .feature-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .feature-row.reverse {
-            flex-direction: row-reverse;
-        }
-
-        .feature-text {
-            flex: 1;
-        }
-
-        .feature-image {
-            flex: 1.5;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .feature-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            background: #fff;
-        }
-
-        /* Metadata & Filter Grids */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-top: 50px;
-        }
-
-        .grid-card {
-            background: #fff;
-            padding: 30px;
-            border-radius: 18px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            transition: transform 0.3s;
-        }
-
-        .grid-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .grid-card img {
-            width: 100%;
-            height: auto;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .grid-card h4 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--text-heading);
-        }
-
-        .grid-card p {
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text-body);
-            margin-bottom: 0;
-        }
-
-        /* Footer */
-        footer {
-            padding: 60px 0;
-            text-align: center;
-            background: #f5f5f7;
-            font-size: 12px;
-            color: #86868b;
-        }
-
-        /* Tabs */
-        .tabs-nav {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-            margin-top: 30px;
-        }
-
-        .tab-btn {
-            background: #f5f5f7;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 20px;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--text-body);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tab-btn:hover {
-            background: #e8e8ed;
-            color: var(--text-heading);
-        }
-
-        .tab-btn.active {
-            background: var(--text-heading);
-            color: #fff;
-        }
-
-        .tab-content {
-            display: grid;
-            min-height: 500px;
-            /* Optional min-height */
-        }
-
-        .tab-pane {
-            grid-area: 1 / 1;
-            /* Stack all panes on top of each other */
-            opacity: 0;
-            visibility: hidden;
-            /* Prevent clicking hidden elements */
-            transition: opacity 0.5s ease-in-out, visibility 0.5s;
-            z-index: 1;
-        }
-
-        .tab-pane.active {
-            opacity: 1;
-            visibility: visible;
-            z-index: 2;
-        }
-
-        /* Removed keyframes to rely purely on CSS opacity transition for smoothness */
-
-        /* Large Image Highlight */
-        .highlight-image {
-            width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08);
-            /* slightly deeper shadow */
-            overflow: hidden;
-            background: #fff;
-            margin-bottom: 30px;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            cursor: zoom-in;
-        }
-
-        .highlight-image img {
-            width: 100%;
-            display: block;
-            height: auto;
-        }
-
-        .lightbox {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-        }
-
-        .lightbox.active {
-            display: flex;
-        }
-
-        .lightbox img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 4px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 40px;
-            }
-
-            h2 {
-                font-size: 32px;
-            }
-
-            .feature-row,
-            .feature-row.reverse {
-                flex-direction: column;
-                gap: 40px;
-                text-align: left;
-            }
-
-            .grid-3 {
-                grid-template-columns: 1fr;
-            }
-
-            .hero-image-container {
-                width: 100%;
-            }
-        }
-
-        /* Utils */
-        [data-lang='zh'] {
-            display: none;
-        }
-
-        html.tag-zh [data-lang='en'] {
-            display: none;
-        }
-
-        html.tag-zh [data-lang='zh'] {
-            display: block;
-        }
-    </style>
+        })();
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 
-<body class="tag-zh">
-
-    <header>
-        <div class="nav-content">
-            <a href="#" class="logo">Lightning Renamer</a>
-            <div class="nav-links">
-                <a href="privacy.html" data-lang="zh">隐私政策</a>
-                <a href="privacy.html" data-lang="en">Privacy</a>
-                <a href="terms.html" data-lang="zh">用户协议</a>
-                <a href="terms.html" data-lang="en">Terms</a>
-                <button class="lang-btn" onclick="toggleLanguage()">EN/中文</button>
+<body data-page="home">
+    <header class="site-header">
+        <div class="shell">
+            <div class="nav-bar">
+                <a href="index.html" class="brand" aria-label="Lightning Renamer">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text">Lightning Renamer</span>
+                </a>
+                <nav class="nav-links" aria-label="Primary">
+                    <a href="#overview" class="nav-link is-active">
+                        <span data-lang="zh">概览</span>
+                        <span data-lang="en">Overview</span>
+                    </a>
+                    <a href="#metadata" class="nav-link">
+                        <span data-lang="zh">元数据</span>
+                        <span data-lang="en">Metadata</span>
+                    </a>
+                    <a href="#security" class="nav-link">
+                        <span data-lang="zh">安全</span>
+                        <span data-lang="en">Security</span>
+                    </a>
+                    <a href="privacy.html" class="nav-link">
+                        <span data-lang="zh">隐私政策</span>
+                        <span data-lang="en">Privacy</span>
+                    </a>
+                    <a href="terms.html" class="nav-link">
+                        <span data-lang="zh">用户协议</span>
+                        <span data-lang="en">Terms</span>
+                    </a>
+                    <button type="button" class="theme-toggle" data-toggle-theme>
+                        <span class="theme-toggle-icon" data-theme-icon aria-hidden="true">☀︎</span>
+                        <span class="theme-toggle-label" data-theme-label-zh data-lang="zh">浅色</span>
+                        <span class="theme-toggle-label" data-theme-label-en data-lang="en">Light</span>
+                    </button>
+                    <button type="button" class="lang-toggle" data-toggle-language>
+                        EN / 中文
+                    </button>
+                </nav>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero section">
-        <div class="container">
-            <h1 data-lang="zh">Lightning Renamer</h1>
-            <h1 data-lang="en">Lightning Renamer</h1>
+    <main>
+        <section class="section hero-section" id="overview">
+            <div class="shell hero-grid">
+                <div class="hero-copy">
+                    <div class="hero-tags">
+                        <span class="hero-tag">
+                            <span data-lang="zh">14种专业重命名规则</span>
+                            <span data-lang="en">14 Professional Renaming Rules</span>
+                        </span>
+                        <span class="hero-tag">
+                            <span data-lang="zh">强大的元数据面板</span>
+                            <span data-lang="en">Powerful Metadata Panel</span>
+                        </span>
+                        <span class="hero-tag">
+                            <span data-lang="zh">安全与隐私</span>
+                            <span data-lang="en">Security &amp; Privacy</span>
+                        </span>
+                    </div>
 
-            <p class="text-max-800" data-lang="zh">告别繁琐，一键掌控！Lightning Renamer
-                是您管理海量文件的高效解决方案，以其高度的灵活性和强大的功能，让文件重命名变得简单、智能、高效。</p>
-            <p class="text-max-800" data-lang="en">Simplify file management with one powerful tool! Lightning Renamer
-                offers an efficient solution for organizing your files with flexibility, intelligence, and speed.</p>
+                    <h1 data-lang="zh">Lightning Renamer</h1>
+                    <h1 data-lang="en">Lightning Renamer</h1>
 
-            <p class="text-max-800" data-lang="zh" style="margin-top: -10px; font-size: 105%;">Lightning Renamer 是一款专为
-                Mac
-                用户打造的专业级批量重命名工具。无论您是摄影师、设计师还是普通用户，面对成百上千的文件，它都能轻松应对。内置14种功能各异的重命名规则，支持无限组合、拖拽排序、文件名称实时预览，更有丰富的元数据支持和创新的"规则作用域"功能，将复杂的文件整理工作化繁为简。
-            </p>
-            <p class="text-max-800" data-lang="en" style="margin-top: -10px; font-size: 105%;">Lightning Renamer is a
-                professional batch renaming tool designed specifically for Mac users. Whether you're a photographer,
-                designer, or everyday user dealing with hundreds of files, this app handles it all with ease. With 14
-                versatile renaming rules, unlimited combinations, drag-and-drop reordering, and real-time previews, plus
-                extensive metadata support and the innovative "rule scope" feature, Lightning Renamer transforms complex
-                file organization into a simple task.</p>
+                    <p data-lang="zh">告别繁琐，一键掌控！Lightning Renamer
+                        是您管理海量文件的高效解决方案，以其高度的灵活性和强大的功能，让文件重命名变得简单、智能、高效。</p>
+                    <p data-lang="en">Simplify file management with one powerful tool! Lightning Renamer offers an
+                        efficient solution for organizing your files with flexibility, intelligence, and speed.</p>
 
-            <a href="#" class="app-store-button" target="_blank">
-                <svg viewBox="0 0 384 512" fill="white">
-                    <path
-                        d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z" />
-                </svg>
-                <div class="btn-text">
-                    <span class="small" data-lang="zh">下载于</span>
-                    <span class="small" data-lang="en">Download on the</span>
-                    <span class="big">Mac App Store</span>
-                </div>
-            </a>
-
-            <div class="hero-image-container">
-                <img src="pics/mainview.png" alt="App Main Interface" onclick="openLightbox(this.src)">
-            </div>
-        </div>
-    </section>
-
-    <!-- Content Sections -->
-    <section class="section alt-bg">
-        <div class="container">
-
-            <!-- Rules -->
-            <div class="feature-row">
-                <div class="feature-text">
-                    <h2 data-lang="zh">14种专业重命名规则</h2>
-                    <h2 data-lang="en">14 Professional Renaming Rules</h2>
-
-                    <p data-lang="zh">Lightning Renamer
-                        精心打造了14种功能强大的重命名规则，涵盖文件管理的方方面面。从基础的文本替换、插入、删除，到专业的序列化编号、大小写转换、扩展名修改；从实用的清理空白、去除字符、长度填充，到高级的正则表达式匹配、用户自定义输入、随机化处理以及全新加入的自定义脚本规则，每一种规则都经过精心设计，确保简单易用的同时提供强大的功能。
+                    <p data-lang="zh">Lightning Renamer 是一款专为 Mac
+                        用户打造的专业级批量重命名工具。无论您是摄影师、设计师还是普通用户，面对成百上千的文件，它都能轻松应对。内置14种功能各异的重命名规则，支持无限组合、拖拽排序、文件名称实时预览，更有丰富的元数据支持和创新的"规则作用域"功能，将复杂的文件整理工作化繁为简。
                     </p>
-                    <p data-lang="zh">
-                        这些规则支持无限组合使用，并可通过直观的拖拽操作自由调整执行顺序。配合实时预览功能，您可以在应用前清晰看到每一步操作的结果，避免误操作。更强大的是，每条规则都支持"作用域"设置，让您能够精准控制规则应用的目标文件范围，实现真正意义上的灵活精准控制。
-                    </p>
+                    <p data-lang="en">Lightning Renamer is a professional batch renaming tool designed specifically for
+                        Mac users. Whether you're a photographer, designer, or everyday user dealing with hundreds of
+                        files, this app handles it all with ease. With 14 versatile renaming rules, unlimited
+                        combinations, drag-and-drop reordering, and real-time previews, plus extensive metadata support
+                        and the innovative "rule scope" feature, Lightning Renamer transforms complex file organization
+                        into a simple task.</p>
 
-                    <p data-lang="en">Lightning Renamer features 14 powerful renaming rules covering every aspect of
-                        file management. From basic text replacement, insertion, and deletion, to professional
-                        serialization numbering, case conversion, and extension modification; from practical whitespace
-                        cleaning, character stripping, and padding, to advanced regular expression matching, custom user
-                        input, randomization, and the newly added custom script rule. Each rule is carefully designed to
-                        ensure ease of use while delivering
-                        powerful functionality.</p>
-                    <p data-lang="en">These rules support unlimited combinations and can be freely reordered through
-                        intuitive drag-and-drop operations. With real-time preview functionality, you can clearly see
-                        the results of each operation before applying changes, preventing errors.</p>
+                    <div class="hero-actions">
+                        <a href="#" class="store-button" aria-label="Download Lightning Renamer on the Mac App Store">
+                            <svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true">
+                                <path
+                                    d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 52.3-11.4 69.5-34.3z" />
+                            </svg>
+                            <span class="btn-text">
+                                <span class="small" data-lang="zh">下载于</span>
+                                <span class="small" data-lang="en">Download on the</span>
+                                <span class="big">Mac App Store</span>
+                            </span>
+                        </a>
+                        <span class="summary-chip">
+                            <span data-lang="zh"><strong>本地处理</strong> · 所有文件处理均在本地进行，绝无上传行为。</span>
+                            <span data-lang="en"><strong>100% local</strong> · All processing is 100% local. No files
+                                are ever uploaded.</span>
+                        </span>
+                    </div>
                 </div>
-                <div class="feature-image">
-                    <img src="pics/rules/rules.png" alt="Renaming Rules" onclick="openLightbox(this.src)">
+
+                <div class="hero-stage hero-stage-live" role="img"
+                    aria-label="Lightning Renamer main workspace preview in light and dark mode">
+                    <div class="hero-stage-top">
+                        <button type="button" class="hero-preview-switch" data-toggle-hero-preview
+                            aria-label="Toggle interface preview theme">
+                            <span class="hero-preview-switch-track">
+                                <span class="hero-preview-switch-icon hero-preview-switch-icon-sun"
+                                    aria-hidden="true">☀︎</span>
+                                <span class="hero-preview-switch-icon hero-preview-switch-icon-moon"
+                                    aria-hidden="true">☾</span>
+                                <span class="hero-preview-switch-thumb" aria-hidden="true"></span>
+                            </span>
+                        </button>
+                    </div>
+
+                    <figure class="hero-workspace-frame float-slow">
+                        <img src="assets/hero/mainworkspace-light.png"
+                            alt="Lightning Renamer main workspace in light mode"
+                            class="hero-workspace-shot hero-workspace-shot-light">
+                        <img src="assets/hero/mainworkspace-dark.png"
+                            alt="Lightning Renamer main workspace in dark mode"
+                            class="hero-workspace-shot hero-workspace-shot-dark">
+                    </figure>
                 </div>
             </div>
+        </section>
 
-            <!-- Scope -->
-            <div class="feature-row reverse">
-                <div class="feature-text">
-                    <h2 data-lang="zh">手术刀般精准的"规则作用域"功能</h2>
-                    <h2 data-lang="en">Surgical Precision with "Rule Scope"</h2>
+        <section class="section">
+            <div class="shell">
+                <div class="feature-grid">
+                    <article class="copy-card">
+                        <h2 data-lang="zh">14种专业重命名规则</h2>
+                        <h2 data-lang="en">14 Professional Renaming Rules</h2>
 
-                    <p data-lang="zh">
-                        如同外科手术刀般精准，规则作用域让您能够将每条规则精确定位到指定文件，在复杂场景下实现极致的重命名控制。当您面对一个混杂着图片、视频和文档的文件夹时，您可以创建一条规则专门作用于所有.jpg文件，另一条规则只作用于文件名包含"报告"的文档，而第三条规则则应用到其余所有文件上。
-                    </p>
-                    <p data-lang="zh">
-                        作用域功能与文件筛选功能完美结合，允许您先用筛选器快速定位特定文件群组（如某个时间段创建的文件、特定大小范围的文件或特定扩展名的文件），然后为这些筛选后的文件单独设置规则，实现多层次、多条件的精准文件处理。
-                    </p>
+                        <p data-lang="zh">Lightning Renamer
+                            精心打造了14种功能强大的重命名规则，涵盖文件管理的方方面面。从基础的文本替换、插入、删除，到专业的序列化编号、大小写转换、扩展名修改；从实用的清理空白、去除字符、长度填充，到高级的正则表达式匹配、用户自定义输入、随机化处理以及全新加入的自定义脚本规则，每一种规则都经过精心设计，确保简单易用的同时提供强大的功能。
+                        </p>
+                        <p data-lang="zh">
+                            这些规则支持无限组合使用，并可通过直观的拖拽操作自由调整执行顺序。配合实时预览功能，您可以在应用前清晰看到每一步操作的结果，避免误操作。更强大的是，每条规则都支持"作用域"设置，让您能够精准控制规则应用的目标文件范围，实现真正意义上的灵活精准控制。
+                        </p>
 
-                    <p data-lang="en">Like a surgeon's scalpel, Rule Scope enables you to precisely target each rule to
-                        specific files, achieving ultimate renaming control in complex scenarios. When facing a folder
-                        with a mix of images, videos, and documents, you can create one rule specifically for all .jpg
-                        files, another rule only for files with "report" in their names, and a third rule for all
-                        remaining files.</p>
-                    <p data-lang="en">The scope feature works perfectly with the file filtering function, allowing you
-                        to first use filters to quickly locate specific file groups, and then set separate rules for
-                        these filtered files, achieving multi-level, multi-condition precise file processing.</p>
+                        <p data-lang="en">Lightning Renamer features 14 powerful renaming rules covering every aspect
+                            of file management. From basic text replacement, insertion, and deletion, to professional
+                            serialization numbering, case conversion, and extension modification; from practical
+                            whitespace cleaning, character stripping, and padding, to advanced regular expression
+                            matching, custom user input, randomization, and the newly added custom script rule. Each
+                            rule is carefully designed to ensure ease of use while delivering powerful functionality.
+                        </p>
+                        <p data-lang="en">These rules support unlimited combinations and can be freely reordered
+                            through intuitive drag-and-drop operations. With real-time preview functionality, you can
+                            clearly see the results of each operation before applying changes, preventing errors.</p>
+                    </article>
+
+                    <div class="stage-card rules-stage carousel-stage" id="rules-carousel" role="region"
+                        aria-label="Rules showcase carousel">
+                        <div class="carousel-track-container">
+                            <ul class="carousel-track">
+                                <li class="carousel-slide is-active"><img src="assets/rules/rule-main.png"
+                                        alt="Rule Main" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rule-metadata-selector.png"
+                                        alt="Metadata Selector" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rule-preset.png" alt="Rule Preset"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/case.png" alt="Case Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/clean.png" alt="Clean Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/delete.png" alt="Delete Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/extension.png"
+                                        alt="Extension Rule" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/insert.png" alt="Insert Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/padding.png" alt="Padding Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/randomize.png"
+                                        alt="Randomize Rule" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/regexp.png" alt="Regexp Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/remove.png" alt="Remove Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/replace.png" alt="Replace Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/script.png" alt="Script Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/serialize.png"
+                                        alt="Serialize Rule" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/strip.png" alt="Strip Rule"
+                                        class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/rules/rules/user-input.png"
+                                        alt="User Input Rule" class="carousel-image"></li>
+                            </ul>
+                        </div>
+                        <div class="carousel-nav">
+                            <button class="carousel-indicator is-active" aria-label="Slide 1"></button>
+                            <button class="carousel-indicator" aria-label="Slide 2"></button>
+                            <button class="carousel-indicator" aria-label="Slide 3"></button>
+                            <button class="carousel-indicator" aria-label="Slide 4"></button>
+                            <button class="carousel-indicator" aria-label="Slide 5"></button>
+                            <button class="carousel-indicator" aria-label="Slide 6"></button>
+                            <button class="carousel-indicator" aria-label="Slide 7"></button>
+                            <button class="carousel-indicator" aria-label="Slide 8"></button>
+                            <button class="carousel-indicator" aria-label="Slide 9"></button>
+                            <button class="carousel-indicator" aria-label="Slide 10"></button>
+                            <button class="carousel-indicator" aria-label="Slide 11"></button>
+                            <button class="carousel-indicator" aria-label="Slide 12"></button>
+                            <button class="carousel-indicator" aria-label="Slide 13"></button>
+                            <button class="carousel-indicator" aria-label="Slide 14"></button>
+                            <button class="carousel-indicator" aria-label="Slide 15"></button>
+                            <button class="carousel-indicator" aria-label="Slide 16"></button>
+                            <button class="carousel-indicator" aria-label="Slide 17"></button>
+                        </div>
+                    </div>
                 </div>
-                <div class="feature-image">
-                    <img src="pics/rules/scope.png" alt="Rule Scope" onclick="openLightbox(this.src)">
+
+                <div class="feature-grid reverse">
+                    <article class="copy-card">
+                        <h2 data-lang="zh">手术刀般精准的"规则作用域"功能</h2>
+                        <h2 data-lang="en">Surgical Precision with "Rule Scope"</h2>
+
+                        <p data-lang="zh">
+                            如同外科手术刀般精准，规则作用域让您能够将每条规则精确定位到指定文件，在复杂场景下实现极致的重命名控制。当您面对一个混杂着图片、视频和文档的文件夹时，您可以创建一条规则专门作用于所有.jpg文件，另一条规则只作用于文件名包含"报告"的文档，而第三条规则则应用到其余所有文件上。
+                        </p>
+                        <p data-lang="zh">
+                            作用域功能与文件筛选功能完美结合，允许您先用筛选器快速定位特定文件群组（如某个时间段创建的文件、特定大小范围的文件或特定扩展名的文件），然后为这些筛选后的文件单独设置规则，实现多层次、多条件的精准文件处理。
+                        </p>
+
+                        <p data-lang="en">Like a surgeon's scalpel, Rule Scope enables you to precisely target each
+                            rule to specific files, achieving ultimate renaming control in complex scenarios. When
+                            facing a folder with a mix of images, videos, and documents, you can create one rule
+                            specifically for all .jpg files, another rule only for files with "report" in their names,
+                            and a third rule for all remaining files.</p>
+                        <p data-lang="en">The scope feature works perfectly with the file filtering function, allowing
+                            you to first use filters to quickly locate specific file groups, and then set separate
+                            rules for these filtered files, achieving multi-level, multi-condition precise file
+                            processing.</p>
+                    </article>
+
+                    <div class="stage-card scope-stage carousel-stage" id="scope-carousel" role="region"
+                        aria-label="Rule scope showcase carousel">
+                        <div class="carousel-track-container">
+                            <ul class="carousel-track">
+                                <li class="carousel-slide is-active"><img src="assets/scope/scope-file.png"
+                                        alt="Scope Rule File Matching" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/scope/scope-view.png"
+                                        alt="Rule Scope UI View" class="carousel-image"></li>
+                            </ul>
+                        </div>
+                        <div class="carousel-nav">
+                            <button class="carousel-indicator is-active" aria-label="Slide 1"></button>
+                            <button class="carousel-indicator" aria-label="Slide 2"></button>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
+        <section class="section" id="metadata">
+            <div class="shell">
+                <div class="metadata-shell">
+                    <div class="section-heading">
+                        <h2 data-lang="zh">强大的元数据面板</h2>
+                        <h2 data-lang="en">Powerful Metadata Panel</h2>
+                        <p data-lang="zh">
+                            强大的文件信息中心与编辑器。选择任意文件，其丰富的元数据立即呈现并支持实时编辑。支持多种文件类型的专业元数据提取和管理，直接复制元数据信息应用到重命名规则，使文件整理更加精准高效。
+                        </p>
+                        <p data-lang="en">A powerful file information center and editor. Select any file to instantly
+                            view its rich metadata with real-time editing support. Supports professional metadata
+                            extraction and management for multiple file types, allowing direct copying of metadata to
+                            renaming rules for more precise file organization.</p>
+                    </div>
+                </div>
+
+                <div class="tab-stage metadata-stage-container">
+                    <div class="tabs-wrap">
+                        <div class="tabs" role="tablist" aria-label="Metadata types">
+                            <button type="button" class="tab-btn is-active" data-tab-target="audio" role="tab"
+                                aria-selected="true">
+                                <span data-lang="zh">音频文件</span>
+                                <span data-lang="en">Audio</span>
+                            </button>
+                            <button type="button" class="tab-btn" data-tab-target="photo" role="tab"
+                                aria-selected="false">
+                                <span data-lang="zh">图像文件</span>
+                                <span data-lang="en">Image</span>
+                            </button>
+                            <button type="button" class="tab-btn" data-tab-target="video" role="tab"
+                                aria-selected="false">
+                                <span data-lang="zh">视频文件</span>
+                                <span data-lang="en">Video</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane is-active" data-tab-pane="audio">
+                        <div class="tab-panel metadata-tab-panel">
+                            <div class="tab-stage metadata-audio metadata-gallery-stage metadata-stage-live" role="img"
+                                aria-label="Audio metadata placeholder interface">
+                                <div class="metadata-gallery metadata-gallery-audio">
+                                    <figure
+                                        class="metadata-real-shot metadata-real-shot-portrait metadata-real-shot-fade">
+                                        <img src="assets/metadata/audio-main.png" alt="Audio metadata panel screenshot"
+                                            class="metadata-real-image metadata-real-image-top">
+                                    </figure>
+
+                                    <div class="metadata-shot-stack metadata-shot-stack-live">
+                                        <figure class="metadata-real-shot metadata-real-shot-card">
+                                            <img src="assets/metadata/audio-editor.png"
+                                                alt="Audio tag editor screenshot" class="metadata-real-image">
+                                        </figure>
+
+                                        <figure class="metadata-real-shot metadata-real-shot-card">
+                                            <img src="assets/metadata/audio-tags-all.png"
+                                                alt="Audio all tags screenshot" class="metadata-real-image">
+                                        </figure>
+                                    </div>
+                                </div>
+                            </div>
+                            <article class="tab-copy">
+                                <p data-lang="zh">全面支持 MP3, FLAC, M4A, OGG 等主流音频格式。自动提取并显示完整的 ID3
+                                    标签信息（标题、艺术家、专辑、作曲家、流派等）。内置轻量级编辑器，允许您直接修改标签并即时保存。</p>
+                                <p data-lang="en">Comprehensive support for MP3, FLAC, M4A, OGG, and more.
+                                    Automatically extracts full ID3 tags (Title, Artist, Album, Composer, Genre,
+                                    etc).
+                                    Built-in editor allows direct modification and instant saving.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" data-tab-pane="photo">
+                        <div class="tab-panel metadata-tab-panel">
+                            <div class="tab-stage metadata-photo metadata-gallery-stage metadata-stage-live" role="img"
+                                aria-label="Photo metadata placeholder interface">
+                                <div class="metadata-gallery metadata-gallery-single">
+                                    <figure
+                                        class="metadata-real-shot metadata-real-shot-portrait metadata-real-shot-fade">
+                                        <img src="assets/metadata/photo-main.png" alt="Photo metadata panel screenshot"
+                                            class="metadata-real-image metadata-real-image-top">
+                                    </figure>
+                                    <div class="metadata-info-stack">
+                                        <div class="metadata-float-card metadata-float-top">
+                                            <span class="hero-tag">EXIF</span>
+                                            <div class="detail-line long"></div>
+                                            <div class="detail-line med"></div>
+                                        </div>
+                                        <div class="metadata-float-card metadata-float-bottom">
+                                            <span class="hero-tag">Lens / GPS</span>
+                                            <div class="detail-line accent long"></div>
+                                            <div class="detail-line short"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <article class="tab-copy">
+                                <p data-lang="zh">智能提取 Exif 元数据，涵盖相机型号、镜头参数、ISO、光圈、快门速度、拍摄时间及 GPS
+                                    地理位置信息。为摄影师提供精确的参数参考，并支持将拍摄时间用于文件名中。</p>
+                                <p data-lang="en">Intelligently extracts Exif metadata including Camera Model, Lens,
+                                    ISO, Aperture, Shutter Speed, Date Taken, and GPS. Provides precise data for
+                                    photographers and supports using capture time in filenames.</p>
+                            </article>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" data-tab-pane="video">
+                        <div class="tab-panel metadata-tab-panel">
+                            <div class="tab-stage metadata-video metadata-gallery-stage metadata-stage-live" role="img"
+                                aria-label="Video metadata placeholder interface">
+                                <div class="metadata-gallery metadata-gallery-single">
+                                    <figure
+                                        class="metadata-real-shot metadata-real-shot-portrait metadata-real-shot-fade">
+                                        <img src="assets/metadata/video-main.png" alt="Video metadata panel screenshot"
+                                            class="metadata-real-image metadata-real-image-top">
+                                    </figure>
+                                    <div class="metadata-info-stack">
+                                        <div class="metadata-float-card metadata-float-top">
+                                            <span class="hero-tag">Codec / FPS</span>
+                                            <div class="detail-line long"></div>
+                                            <div class="detail-line med"></div>
+                                        </div>
+                                        <div class="metadata-float-card metadata-float-bottom">
+                                            <span class="hero-tag">Tracks / Subs</span>
+                                            <div class="detail-line accent long"></div>
+                                            <div class="detail-line short"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <article class="tab-copy">
+                                <p data-lang="zh">
+                                    完整展示视频技术参数：编码格式、分辨率、比特率、帧率。深度解析多媒体结构，显示音视频轨道数量、字幕语言及精确时长，帮您快速掌握视频文件的技术细节。</p>
+                                <p data-lang="en">Displays full technical specs: Codec, Resolution, Bitrate, Frame
+                                    Rate. Deep structural analysis shows track counts, subtitle languages, and
+                                    precise
+                                    duration, giving you full control over video details.</p>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="shell">
+                <div class="feature-grid">
+                    <article class="copy-card">
+                        <h2 data-lang="zh">智能筛选系统</h2>
+                        <h2 data-lang="en">Intelligent Filtering System</h2>
+                        <p data-lang="zh">
+                            多维度精确定位，海量文件从容管理。支持9大筛选类型的自由组合，通过与/或逻辑关系和分组功能构建复杂筛选条件，配合快速文本搜索和预设筛选方案，无论文件数量多少，都能快速找到目标文件。
+                        </p>
+                        <p data-lang="en">Multi-dimensional precision targeting for effortless management of massive
+                            file collections. Supports flexible combination of 9 major filter types through AND/OR
+                            logic relationships and grouping functions. Combined with quick text search and preset
+                            filter schemes, quickly locate target files regardless of quantity.</p>
+                    </article>
+
+                    <div class="stage-card filters-stage carousel-stage" id="filters-carousel" role="region"
+                        aria-label="Intelligent filtering showcase carousel">
+                        <div class="carousel-track-container">
+                            <ul class="carousel-track">
+                                <li class="carousel-slide is-active"><img src="assets/filter/filter-text-01.png"
+                                        alt="Quick Text Search" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/filter/filter-editor-02.png"
+                                        alt="Filter Editor Interface" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/filter/filter-advanced-03.png"
+                                        alt="Advanced Filtering Scenarios" class="carousel-image"></li>
+                            </ul>
+                        </div>
+                        <div class="carousel-nav">
+                            <button class="carousel-indicator is-active" aria-label="Slide 1"></button>
+                            <button class="carousel-indicator" aria-label="Slide 2"></button>
+                            <button class="carousel-indicator" aria-label="Slide 3"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feature-grid reverse">
+                    <article class="copy-card">
+                        <h2 data-lang="zh">灵活的布局切换</h2>
+                        <h2 data-lang="en">Flexible Layout Switching</h2>
+                        <p data-lang="zh">工作区布局随心切换，完美适配不同工作场景和个人偏好。通过工具栏的布局切换按钮，一键在水平布局和垂直布局之间自由切换，让您的工作空间始终保持最佳状态。</p>
+                        <p data-lang="en">Switch workspace layouts effortlessly to perfectly adapt to different work
+                            scenarios and personal preferences. With the layout toggle button in the toolbar,
+                            seamlessly switch between horizontal and vertical layouts with one click, keeping your
+                            workspace always optimized.</p>
+                    </article>
+
+                    <div class="stage-card layout-stage carousel-stage" id="layout-carousel" role="region"
+                        aria-label="Flexible layout showcase carousel">
+                        <div class="carousel-track-container">
+                            <ul class="carousel-track">
+                                <li class="carousel-slide is-active"><img src="assets/layout/horizontal.png"
+                                        alt="Horizontal Layout" class="carousel-image"></li>
+                                <li class="carousel-slide"><img src="assets/layout/vertical.png" alt="Vertical Layout"
+                                        class="carousel-image"></li>
+                            </ul>
+                        </div>
+                        <div class="carousel-nav">
+                            <button class="carousel-indicator is-active" aria-label="Slide 1"></button>
+                            <button class="carousel-indicator" aria-label="Slide 2"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="security">
+            <div class="shell">
+                <div class="security-card">
+                    <div>
+                        <h2 data-lang="zh">安全与隐私</h2>
+                        <h2 data-lang="en">Security &amp; Privacy</h2>
+                        <p data-lang="zh">Lightning Renamer 完全遵守 macOS
+                            沙盒(Sandbox)安全机制。您的所有文件处理均在本地进行，网络权限仅用于加载必要的在线文档，绝无上传行为。</p>
+                        <p data-lang="en">Lightning Renamer fully complies with macOS Sandbox security mechanisms. All
+                            processing is 100% local. No files are ever uploaded.</p>
+                        <div class="hero-actions">
+                            <a href="privacy.html" class="hero-tag">
+                                <span data-lang="zh">查看隐私政策</span>
+                                <span data-lang="en">View Privacy Policy</span>
+                            </a>
+                            <a href="terms.html" class="hero-tag">
+                                <span data-lang="zh">查看用户协议</span>
+                                <span data-lang="en">View Terms</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="security-visual" aria-hidden="true">
+                        <div class="security-document">
+                            <span class="security-document-fold"></span>
+                            <span class="security-document-line line-1"></span>
+                            <span class="security-document-line line-2"></span>
+                            <span class="security-document-line line-3"></span>
+                            <span class="security-document-line line-4"></span>
+                        </div>
+                        <div class="security-lock-icon">
+                            <span class="security-lock-arch"></span>
+                            <span class="security-lock-body"></span>
+                            <span class="security-lock-keyhole"></span>
+                        </div>
+                        <div class="security-badge">
+                            <span class="security-badge-dot"></span>
+                            <span data-lang="zh">本地处理</span>
+                            <span data-lang="en">Local Only</span>
+                        </div>
+                        <div class="security-shield">
+                            <svg class="security-shield-svg" viewBox="0 0 180 210" aria-hidden="true" focusable="false">
+                                <path
+                                    d="M90 8C116 20 141 27 158 31V86C158 132 133 170 90 202C47 170 22 132 22 86V31C39 27 64 20 90 8Z" />
+                            </svg>
+                            <span class="security-shield-mark mark-1"></span>
+                            <span class="security-shield-mark mark-2"></span>
+                            <span class="security-shield-mark mark-3"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell">
+            <div class="footer-card">
+                <div class="footer-links">
+                    <a href="index.html" class="footer-link">Lightning Renamer</a>
+                    <a href="privacy.html" class="footer-link">
+                        <span data-lang="zh">隐私政策</span>
+                        <span data-lang="en">Privacy</span>
+                    </a>
+                    <a href="terms.html" class="footer-link">
+                        <span data-lang="zh">用户协议</span>
+                        <span data-lang="en">Terms</span>
+                    </a>
+                </div>
+                <div class="footer-copy">
+                    <span data-lang="zh">© 2026 Lightning Renamer. 保留所有权利。</span>
+                    <span data-lang="en">© 2026 Lightning Renamer. All rights reserved.</span>
+                </div>
+            </div>
         </div>
-    </section>
-
-    <!-- Metadata Section (White BG) -->
-    <section class="section">
-        <div class="container">
-            <div class="text-center">
-                <h2 data-lang="zh">强大的元数据面板</h2>
-                <h2 data-lang="en">Powerful Metadata Panel</h2>
-                <p class="text-max-800" data-lang="zh">
-                    强大的文件信息中心与编辑器。选择任意文件，其丰富的元数据立即呈现并支持实时编辑。支持多种文件类型的专业元数据提取和管理，直接复制元数据信息应用到重命名规则，使文件整理更加精准高效。</p>
-                <p class="text-max-800" data-lang="en">A powerful file information center and editor. Select any file to
-                    instantly view its rich metadata with real-time editing support. Supports professional metadata
-                    extraction and management for multiple file types, allowing direct copying of metadata to renaming
-                    rules for more precise file organization.</p>
-            </div>
-
-            <!-- Tabs Navigation -->
-            <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('audio')">
-                    <span data-lang="zh">音频文件</span><span data-lang="en">Audio</span>
-                </button>
-                <button class="tab-btn" onclick="switchTab('photo')">
-                    <span data-lang="zh">图像文件</span><span data-lang="en">Image</span>
-                </button>
-                <button class="tab-btn" onclick="switchTab('video')">
-                    <span data-lang="zh">视频文件</span><span data-lang="en">Video</span>
-                </button>
-            </div>
-
-            <!-- Tab Contents -->
-            <div class="tab-content">
-
-                <!-- Audio Tab -->
-                <div id="tab-audio" class="tab-pane active">
-                    <div class="highlight-image" onclick="openLightbox('pics/metadata/metadata_audio.png')">
-                        <img src="pics/metadata/metadata_audio.png" alt="Audio Metadata Interface">
-                    </div>
-                    <div class="text-center text-max-800">
-                        <p data-lang="zh">全面支持 MP3, FLAC, M4A, OGG 等主流音频格式。自动提取并显示完整的 ID3
-                            标签信息（标题、艺术家、专辑、作曲家、流派等）。内置轻量级编辑器，允许您直接修改标签并即时保存。</p>
-                        <p data-lang="en">Comprehensive support for MP3, FLAC, M4A, OGG, and more. Automatically
-                            extracts full ID3 tags (Title, Artist, Album, Composer, Genre, etc). Built-in editor allows
-                            direct modification and instant saving.</p>
-                    </div>
-                </div>
-
-                <!-- Photo Tab -->
-                <div id="tab-photo" class="tab-pane">
-                    <div class="highlight-image" onclick="openLightbox('pics/metadata/metadata_photo.png')">
-                        <img src="pics/metadata/metadata_photo.png" alt="Photo Metadata Interface">
-                    </div>
-                    <div class="text-center text-max-800">
-                        <p data-lang="zh">智能提取 Exif 元数据，涵盖相机型号、镜头参数、ISO、光圈、快门速度、拍摄时间及 GPS
-                            地理位置信息。为摄影师提供精确的参数参考，并支持将拍摄时间用于文件名中。</p>
-                        <p data-lang="en">Intelligently extracts Exif metadata including Camera Model, Lens, ISO,
-                            Aperture, Shutter Speed, Date Taken, and GPS. Provides precise data for photographers and
-                            supports using capture time in filenames.</p>
-                    </div>
-                </div>
-
-                <!-- Video Tab -->
-                <div id="tab-video" class="tab-pane">
-                    <div class="highlight-image" onclick="openLightbox('pics/metadata/metadata_video.png')">
-                        <img src="pics/metadata/metadata_video.png" alt="Video Metadata Interface">
-                    </div>
-                    <div class="text-center text-max-800">
-                        <p data-lang="zh">完整展示视频技术参数：编码格式、分辨率、比特率、帧率。深度解析多媒体结构，显示音视频轨道数量、字幕语言及精确时长，帮您快速掌握视频文件的技术细节。</p>
-                        <p data-lang="en">Displays full technical specs: Codec, Resolution, Bitrate, Frame Rate. Deep
-                            structural analysis shows track counts, subtitle languages, and precise duration, giving you
-                            full control over video details.</p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Filters & Layout (Alt BG) -->
-    <section class="section alt-bg">
-        <div class="container">
-
-            <!-- Filters -->
-            <div class="feature-row">
-                <div class="feature-text">
-                    <h2 data-lang="zh">智能筛选系统</h2>
-                    <h2 data-lang="en">Intelligent Filtering System</h2>
-                    <p data-lang="zh">
-                        多维度精确定位，海量文件从容管理。支持9大筛选类型的自由组合，通过与/或逻辑关系和分组功能构建复杂筛选条件，配合快速文本搜索和预设筛选方案，无论文件数量多少，都能快速找到目标文件。</p>
-
-                    <p data-lang="en">Multi-dimensional precision targeting for effortless management of massive file
-                        collections. Supports flexible combination of 9 major filter types through AND/OR logic
-                        relationships and grouping functions. Combined with quick text search and preset filter schemes,
-                        quickly locate target files regardless of quantity.</p>
-                </div>
-                <div class="feature-image">
-                    <img src="pics/filter/filter.png" alt="Smart Filters" onclick="openLightbox(this.src)">
-                </div>
-            </div>
-
-            <!-- Layout -->
-            <div class="feature-row reverse">
-                <div class="feature-text">
-                    <h2 data-lang="zh">灵活的布局切换</h2>
-                    <h2 data-lang="en">Flexible Layout Switching</h2>
-                    <p data-lang="zh">工作区布局随心切换，完美适配不同工作场景和个人偏好。通过工具栏的布局切换按钮，一键在水平布局和垂直布局之间自由切换，让您的工作空间始终保持最佳状态。</p>
-                    <p data-lang="en">Switch workspace layouts effortlessly to perfectly adapt to different work
-                        scenarios and personal preferences. With the layout toggle button in the toolbar, seamlessly
-                        switch between horizontal and vertical layouts with one click, keeping your workspace always
-                        optimized.</p>
-                </div>
-                <div class="feature-image">
-                    <img src="pics/layout/vertical.png" alt="Layout Options" onclick="openLightbox(this.src)">
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- Security (White BG) -->
-    <section class="section">
-        <div class="container text-center">
-            <h2 data-lang="zh">安全与隐私</h2>
-            <h2 data-lang="en">Security & Privacy</h2>
-            <p class="text-max-800" data-lang="zh">Lightning Renamer 完全遵守 macOS
-                沙盒(Sandbox)安全机制。您的所有文件处理均在本地进行，网络权限仅用于加载必要的在线文档，绝无上传行为。</p>
-            <p class="text-max-800" data-lang="en">Lightning Renamer fully complies with macOS Sandbox security
-                mechanisms. All processing is 100% local. No files are ever uploaded.</p>
-        </div>
-    </section>
-
-    <footer>
-        <p data-lang="zh">© 2026 Lightning Renamer. 保留所有权利。</p>
-        <p data-lang="en">© 2026 Lightning Renamer. All rights reserved.</p>
     </footer>
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
-        <img id="lightbox-img" src="">
-    </div>
-
-    <script>
-        const LANG_KEY = 'lightning_renamer_lang';
-
-        function applyLanguage(lang) {
-            const html = document.documentElement;
-            if (lang === 'en') {
-                html.classList.remove('tag-zh');
-                html.classList.add('tag-en');
-            } else {
-                html.classList.remove('tag-en');
-                html.classList.add('tag-zh');
-            }
-            localStorage.setItem(LANG_KEY, lang);
-        }
-
-        function toggleLanguage() {
-            const html = document.documentElement;
-            const current = html.classList.contains('tag-en') ? 'en' : 'zh';
-            const next = current === 'en' ? 'zh' : 'en';
-            applyLanguage(next);
-        }
-
-        // Init language on load
-        (function () {
-            const saved = localStorage.getItem(LANG_KEY);
-            if (saved) {
-                applyLanguage(saved);
-            }
-        })();
-
-        function openLightbox(src) {
-            document.getElementById('lightbox-img').src = src;
-            document.getElementById('lightbox').classList.add('active');
-        }
-
-        function closeLightbox() {
-            document.getElementById('lightbox').classList.remove('active');
-        }
-
-        // Keydown 'Esc' to close
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeLightbox();
-        });
-
-        function switchTab(type) {
-            // Update buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-
-            // Update content: simply toggle active class. CSS Transition handles the rest.
-            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-            document.getElementById('tab-' + type).classList.add('active');
-        }
-    </script>
-
 </body>
 
 </html>

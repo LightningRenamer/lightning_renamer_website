@@ -1,311 +1,161 @@
 <!DOCTYPE html>
-<html lang="zh" class="tag-zh">
+<html lang="zh" class="tag-zh" data-theme="light">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Privacy Policy - Lightning Renamer</title>
-    <style>
-        :root {
-            --bg-body: #ffffff;
-            --bg-section: #f5f5f7;
-            --text-heading: #1d1d1f;
-            --text-body: #424245;
-            --accent-color: #0071e3;
-            --nav-bg: rgba(255, 255, 255, 0.8);
-            --border-color: #d2d2d7;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-heading);
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
-            letter-spacing: -0.012em;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Nav */
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: 48px;
-            background: var(--nav-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 999;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-content {
-            width: 100%;
-            max-width: 980px;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 19px;
-            font-weight: 600;
-            color: var(--text-heading);
-            text-decoration: none;
-            transition: opacity 0.3s;
-        }
-
-        .logo:hover {
-            opacity: 0.8;
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-links a,
-        .lang-btn {
-            font-size: 12px;
-            color: #666;
-            text-decoration: none;
-            margin-left: 20px;
-            cursor: pointer;
-            border: none;
-            background: none;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover,
-        .lang-btn:hover {
-            color: var(--text-heading);
-        }
-
-        /* General Layout */
-        .section {
-            padding: 100px 0;
-            overflow: hidden;
-            min-height: 80vh;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* Typography */
-        h1 {
-            font-size: 48px;
-            line-height: 1.1;
-            font-weight: 700;
-            letter-spacing: -0.005em;
-            margin-bottom: 40px;
-        }
-
-        h2 {
-            font-size: 30px;
-            line-height: 1.2;
-            font-weight: 600;
-            margin-top: 50px;
-            margin-bottom: 20px;
-        }
-
-        h3 {
-            font-size: 24px;
-            line-height: 1.2;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        p {
-            font-size: 17px;
-            line-height: 1.5;
-            font-weight: 400;
-            color: var(--text-body);
-            margin-bottom: 20px;
-        }
-
-        ul {
-            margin-bottom: 20px;
-            padding-left: 20px;
-            color: var(--text-body);
-        }
-
-        li {
-            margin-bottom: 10px;
-            font-size: 17px;
-        }
-
-        /* Footer */
-        footer {
-            padding: 60px 0;
-            text-align: center;
-            background: #f5f5f7;
-            font-size: 12px;
-            color: #86868b;
-        }
-
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightning Renamer - 隐私政策</title>
+    <meta name="description" content="Lightning Renamer 隐私政策：所有操作均在本地完成，不收集、上传或存储任何用户文件信息。">
+    <link rel="icon" type="image/png" href="assets/app-icon.png">
+    <script>
+        (function () {
+            try {
+                const savedTheme = localStorage.getItem("lightning_renamer_theme");
+                const theme = savedTheme === "light" || savedTheme === "dark"
+                    ? savedTheme
+                    : (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+                document.documentElement.dataset.theme = theme;
+            } catch (error) {
+                document.documentElement.dataset.theme = "light";
             }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .section,
-        footer {
-            opacity: 0;
-            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* Utils */
-        [data-lang='zh'] {
-            display: none;
-        }
-
-        html.tag-zh [data-lang='en'] {
-            display: none;
-        }
-
-        html.tag-zh [data-lang='zh'] {
-            display: block;
-        }
-    </style>
+        })();
+    </script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
 </head>
 
-<body class="tag-zh">
-
-    <header>
-        <div class="nav-content">
-            <a href="index.html" class="logo">Lightning Renamer</a>
-            <div class="nav-links">
-                <a href="privacy.html" data-lang="zh">隐私政策</a>
-                <a href="privacy.html" data-lang="en">Privacy</a>
-                <a href="terms.html" data-lang="zh">用户协议</a>
-                <a href="terms.html" data-lang="en">Terms</a>
-                <button class="lang-btn" onclick="toggleLanguage()">EN/中文</button>
+<body data-page="privacy">
+    <header class="site-header">
+        <div class="shell">
+            <div class="nav-bar">
+                <a href="index.html" class="brand" aria-label="Lightning Renamer">
+                    <span class="brand-mark" aria-hidden="true"></span>
+                    <span class="brand-text">Lightning Renamer</span>
+                </a>
+                <nav class="nav-links" aria-label="Primary">
+                    <a href="index.html" class="nav-link">
+                        <span data-lang="zh">首页</span>
+                        <span data-lang="en">Home</span>
+                    </a>
+                    <a href="privacy.html" class="nav-link is-active">
+                        <span data-lang="zh">隐私政策</span>
+                        <span data-lang="en">Privacy</span>
+                    </a>
+                    <a href="terms.html" class="nav-link">
+                        <span data-lang="zh">用户协议</span>
+                        <span data-lang="en">Terms</span>
+                    </a>
+                    <button type="button" class="theme-toggle" data-toggle-theme>
+                        <span class="theme-toggle-icon" data-theme-icon aria-hidden="true">☀︎</span>
+                        <span class="theme-toggle-label" data-theme-label-zh data-lang="zh">浅色</span>
+                        <span class="theme-toggle-label" data-theme-label-en data-lang="en">Light</span>
+                    </button>
+                    <button type="button" class="lang-toggle" data-toggle-language>
+                        EN / 中文
+                    </button>
+                </nav>
             </div>
         </div>
     </header>
 
-    <section class="section">
-        <div class="container">
-            <h1 data-lang="zh">隐私政策</h1>
-            <h1 data-lang="en">Privacy Policy</h1>
+    <main>
+        <section class="section legal-hero">
+            <div class="shell legal-hero-grid">
+                <div class="copy-card legal-copy">
+                    <div class="legal-summary">
+                        <span data-lang="zh">最后更新：2026年1月27日</span>
+                        <span data-lang="en">Last Updated: January 27, 2026</span>
+                    </div>
 
-            <p data-lang="zh"><strong>最后更新：2026年1月27日</strong></p>
-            <p data-lang="en"><strong>Last Updated: January 27, 2026</strong></p>
+                    <h1 data-lang="zh">隐私政策</h1>
+                    <h1 data-lang="en">Privacy Policy</h1>
 
-            <p data-lang="zh">欢迎使用 Lightning Renamer。我们非常重视您的隐私保护。本隐私政策说明了我们如何收集、使用和保护您的个人信息。</p>
-            <p data-lang="en">Welcome to Lightning Renamer. We take your privacy very seriously. This privacy policy
-                explains how we collect, use, and protect your personal information.</p>
+                    <p data-lang="zh">欢迎使用 Lightning Renamer。我们非常重视您的隐私保护。本隐私政策说明了我们如何收集、使用和保护您的个人信息。</p>
+                    <p data-lang="en">Welcome to Lightning Renamer. We take your privacy very seriously. This privacy
+                        policy explains how we collect, use, and protect your personal information.</p>
+                </div>
+            </div>
+        </section>
 
-            <h2 data-lang="zh">信息收集</h2>
-            <h2 data-lang="en">Information Collection</h2>
-            <p data-lang="zh">Lightning Renamer <strong>不收集任何用户信息</strong>。我们承诺：</p>
-            <p data-lang="en">Lightning Renamer <strong>does not collect any user information</strong>. We commit to:
-            </p>
-            <ul>
-                <li data-lang="zh">所有操作均在本地设备上执行，不会收集或上传任何数据</li>
-                <li data-lang="en">All operations are performed locally on your device, no data is collected or uploaded
-                </li>
-                <li data-lang="zh">不收集任何设备信息、使用统计或诊断数据</li>
-                <li data-lang="en">No device information, usage statistics, or diagnostic data is collected</li>
-                <li data-lang="zh">不收集、记录或存储您的文件内容或文件路径信息</li>
-                <li data-lang="en">No file contents or file path information is collected, recorded, or stored</li>
-            </ul>
+        <section class="section">
+            <div class="shell">
+                <article class="document-card">
+                    <h2 data-lang="zh">1. 数据收集与处理</h2>
+                    <h2 data-lang="en">1. Data Collection and Processing</h2>
+                    <p data-lang="zh">Lightning Renamer
+                        遵循极其严格的“隐私优先”（Privacy-by-Design）原则。我们<strong>不收集、不处理且不存储</strong>任何个人数据。具体而言：</p>
+                    <p data-lang="en">Lightning Renamer strictly abides by the Privacy-by-Design philosophy. We
+                        <strong>do not collect, process, or store</strong> any personal data. Specifically:</p>
+                    <ul>
+                        <li data-lang="zh">
+                            <strong>完全本地化处理：</strong>您的所有文件读取、重命名与写入操作均严格受限在您的本地设备上执行，绝不存在将任何文件或文件名上传至云端的行为。</li>
+                        <li data-lang="en"><strong>100% Local Processing:</strong> All file reading, renaming, and
+                            writing operations run securely constrained within your local device. Under no circumstances
+                            are files or filenames uploaded to cloud servers.</li>
+                        <li data-lang="zh"><strong>无遥测或诊断数据：</strong>我们不收集您的设备指纹、操作系统信息、应用崩溃日志或使用习惯统计。</li>
+                        <li data-lang="en"><strong>Zero Telemetry:</strong> We do not log or collect device
+                            fingerprints, OS information, crash reports, or usage analytics.</li>
+                    </ul>
 
-            <h2 data-lang="zh">信息使用</h2>
-            <h2 data-lang="en">Information Usage</h2>
-            <p data-lang="zh">Lightning Renamer：</p>
-            <p data-lang="en">Lightning Renamer:</p>
-            <ul>
-                <li data-lang="zh">不会将您的信息用于任何目的，因为我们根本不收集任何信息</li>
-                <li data-lang="en">Does not use your information for any purpose because we do not collect any
-                    information</li>
-                <li data-lang="zh">不会与任何第三方分享您的信息</li>
-                <li data-lang="en">Does not share your information with any third parties</li>
-                <li data-lang="zh">不会通过任何方式跟踪您的活动</li>
-                <li data-lang="en">Does not track your activity in any way</li>
-            </ul>
+                    <h2 data-lang="zh">2. 信息共享与披露</h2>
+                    <h2 data-lang="en">2. Data Sharing and Disclosure</h2>
+                    <p data-lang="zh">
+                        鉴于本应用程序从运行机制上不收集任何数据，因此在逻辑上与法律上，我们均无法、也<strong>绝不会</strong>向任何第三方网络、广告商、分析机构或执法部门出售、交易或披露您的信息。
+                    </p>
+                    <p data-lang="en">Because the application structurally avoids collecting any user information, it is
+                        both logically and legally impossible for us to sell, trade, or otherwise disclose data to
+                        third-party networks, advertisers, analytics entities, or law enforcement.</p>
 
-            <h2 data-lang="zh">信息安全</h2>
-            <h2 data-lang="en">Information Security</h2>
-            <p data-lang="zh">由于我们不收集任何用户信息，因此您的隐私完全受到保护：</p>
-            <p data-lang="en">Since we do not collect any user information, your privacy is completely protected:</p>
-            <ul>
-                <li data-lang="zh">所有操作都在本地完成，不会有数据传输</li>
-                <li data-lang="en">All operations are performed locally with no data transmission</li>
-                <li data-lang="zh">无需担心数据泄露问题，因为我们不收集或存储任何数据</li>
-                <li data-lang="en">No need to worry about data breaches, as we do not collect or store any data</li>
-                <li data-lang="zh">应用程序设计遵循隐私优先原则</li>
-                <li data-lang="en">The application is designed with a privacy-first approach</li>
-            </ul>
+                    <h2 data-lang="zh">3. 数据安全性</h2>
+                    <h2 data-lang="en">3. Data Security</h2>
+                    <p data-lang="zh">Lightning Renamer 严格遵守 macOS 的
+                        Sandbox（沙盒）安全隔离机制。这意味着应用程序仅能在您明确授权访问的文件夹权限作用域内运行，彻底杜绝了程序针对系统进行未授权扫描或篡改文件系统的风险。由于无外部数据离线，客观上从根源上消除了我方服务器端产生数据泄露（Data
+                        Breach）的可能。</p>
+                    <p data-lang="en">Lightning Renamer operates under macOS Sandbox restrictions. The app can only
+                        interact with directories you explicitly grant access to, firmly mitigating risks of
+                        unauthorized filesystem scanning or tampering. Given the offline nature of our architecture, the
+                        risk of a server-side data breach on our end is fundamentally non-existent.</p>
 
-            <h2 data-lang="zh">政策更新</h2>
-            <h2 data-lang="en">Policy Updates</h2>
-            <p data-lang="zh">我们可能会不时更新本隐私政策。更新后的政策将在本页面上发布，并在必要时通知您重要更改。</p>
-            <p data-lang="en">We may update this privacy policy from time to time. Updated policies will be posted on
-                this page, and you will be notified of significant changes when necessary.</p>
+                    <h2 data-lang="zh">4. 政策更新</h2>
+                    <h2 data-lang="en">4. Policy Updates</h2>
+                    <p data-lang="zh">
+                        随着应用功能的演进或相关法律法规的变化，我们保留对本隐私政策进行更新和修订的权利。当我们对其作出重大实质性修改时，更新后的版本将会连同“最后更新”日期一起公布于此页面中。</p>
+                    <p data-lang="en">We reserve the right to update this Privacy Policy to reflect changes in our
+                        application or relevant legal frameworks. When material revisions are made, the updated version
+                        will be posted on this page along with the effective "Last Updated" date.</p>
 
-            <h2 data-lang="zh">联系我们</h2>
-            <h2 data-lang="en">Contact Us</h2>
-            <p data-lang="zh">如果您对本隐私政策有任何疑问，请联系我们：</p>
-            <p data-lang="zh">邮箱：<a href="mailto:meowgiccode@163.com"
-                    style="color: var(--accent-color);">meowgiccode@163.com</a></p>
-            <p data-lang="en">If you have any questions about this privacy policy, please contact us at:</p>
-            <p data-lang="en">Email: <a href="mailto:meowgiccode@163.com"
-                    style="color: var(--accent-color);">meowgiccode@163.com</a></p>
+                    <h2 data-lang="zh">联系我们</h2>
+                    <h2 data-lang="en">Contact Us</h2>
+                    <p data-lang="zh">如果您对本隐私政策有任何疑问，请联系我们：</p>
+                    <p data-lang="zh">邮箱：<a href="mailto:meowgiccode@163.com">meowgiccode@163.com</a></p>
+                    <p data-lang="en">If you have any questions about this privacy policy, please contact us at:</p>
+                    <p data-lang="en">Email: <a href="mailto:meowgiccode@163.com">meowgiccode@163.com</a></p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="shell">
+            <div class="footer-card">
+                <div class="footer-links">
+                    <a href="index.html" class="footer-link">Lightning Renamer</a>
+                    <a href="privacy.html" class="footer-link">
+                        <span data-lang="zh">隐私政策</span>
+                        <span data-lang="en">Privacy</span>
+                    </a>
+                    <a href="terms.html" class="footer-link">
+                        <span data-lang="zh">用户协议</span>
+                        <span data-lang="en">Terms</span>
+                    </a>
+                </div>
+                <div class="footer-copy">
+                    <span data-lang="zh">© 2026 Lightning Renamer. 保留所有权利。</span>
+                    <span data-lang="en">© 2026 Lightning Renamer. All rights reserved.</span>
+                </div>
+            </div>
         </div>
-    </section>
-
-    <footer>
-        <p data-lang="zh">© 2026 Lightning Renamer. 保留所有权利。</p>
-        <p data-lang="en">© 2026 Lightning Renamer. All rights reserved.</p>
     </footer>
-
-    <script>
-        const LANG_KEY = 'lightning_renamer_lang';
-
-        function applyLanguage(lang) {
-            const html = document.documentElement;
-            if (lang === 'en') {
-                html.classList.remove('tag-zh');
-                html.classList.add('tag-en');
-            } else {
-                html.classList.remove('tag-en');
-                html.classList.add('tag-zh');
-            }
-            localStorage.setItem(LANG_KEY, lang);
-        }
-
-        function toggleLanguage() {
-            const html = document.documentElement;
-            const current = html.classList.contains('tag-en') ? 'en' : 'zh';
-            const next = current === 'en' ? 'zh' : 'en';
-            applyLanguage(next);
-        }
-
-        // Init language on load
-        (function () {
-            const saved = localStorage.getItem(LANG_KEY);
-            if (saved) {
-                applyLanguage(saved);
-            }
-        })();
-    </script>
 </body>
 
 </html>
