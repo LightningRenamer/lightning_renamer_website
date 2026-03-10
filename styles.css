@@ -2066,6 +2066,14 @@ html[data-theme="dark"] .security-badge-dot {
     margin-bottom: 24px;
 }
 
+html.tag-zh .legal-copy .legal-summary [data-lang="zh"],
+html.tag-en .legal-copy .legal-summary [data-lang="en"] {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+}
+
 .legal-stage {
     min-height: 420px;
 }
